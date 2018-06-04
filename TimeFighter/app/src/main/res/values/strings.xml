@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Time Fighter</string>
+    <string name="textview">your score: %s</string>
+    <string name="timer_count_down">Timer : %s</string>
+    <string name="tap_me">Tap Me</string>
+    <string name="game_over">The game is finished, your score is: %s</string>
 </resources>
