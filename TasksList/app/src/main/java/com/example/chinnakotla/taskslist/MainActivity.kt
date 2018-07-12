@@ -13,22 +13,26 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.FrameLayout
+import com.example.chinnakotla.taskslist.fragments.MainFragment
 
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), ListRecycleViewAdapter.ListSelectionRecyclerViewListener {
+class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteractionListener {
 
 
-    override fun listItemClicked(list: TaskList) {
+    private var mainFragment = MainFragment.newInstance()
+    private var frameLayout: FrameLayout? = null
+
+
+    override fun onListItemClicked(list: TaskList) {
         showListDetail(list)
     }
 
 
-    lateinit var mRecyclerView: RecyclerView
-    private val listDataManager: ListDataManager = ListDataManager(this)
-
     companion object {
         const val INTENT_LIST_KEY = "list"
+        const val INTENT_REQUEST_CODE = 123
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,11 +44,8 @@ class MainActivity : AppCompatActivity(), ListRecycleViewAdapter.ListSelectionRe
             showCreateDialog()
         }
 
-        val lists = listDataManager.readList()
-        mRecyclerView = findViewById(R.id.listRecyclerView)
-        mRecyclerView.layoutManager = LinearLayoutManager(this)
-        mRecyclerView.adapter = ListRecycleViewAdapter(lists, this)
-
+        frameLayout = findViewById(R.id.fragment_container)
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, mainFragment).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -75,10 +76,9 @@ class MainActivity : AppCompatActivity(), ListRecycleViewAdapter.ListSelectionRe
         builder.setPositiveButton(positiveButtonTitle, { dialog, which ->
 
             val list = TaskList(listTitleEditText.text.toString())
-            listDataManager.saveList(list)
-            val recyclerAdapter = mRecyclerView.adapter as ListRecycleViewAdapter
-            recyclerAdapter.addList(list)
+            mainFragment.addList(list)
             dialog.dismiss()
+            showListDetail(list)
         })
         builder.create().show()
     }
@@ -87,7 +87,16 @@ class MainActivity : AppCompatActivity(), ListRecycleViewAdapter.ListSelectionRe
 
         val listDetailIntent = Intent(this, ListDetailActivity::class.java)
         listDetailIntent.putExtra(INTENT_LIST_KEY, list)
-        startActivity(listDetailIntent)
+        startActivityForResult(listDetailIntent, INTENT_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == INTENT_REQUEST_CODE) {
+            data?.let {
+                mainFragment.saveList(it.getParcelableExtra(INTENT_LIST_KEY))
+            }
+        }
     }
 
 

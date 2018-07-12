@@ -8,12 +8,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.InputType
 import android.widget.EditText
+import com.example.chinnakotla.taskslist.fragments.ListDetailFragment
 
 class ListDetailActivity : AppCompatActivity() {
 
     lateinit var list: TaskList
-    lateinit var taskDetailRecyclerView: RecyclerView
     lateinit var addDetailTaskButton: FloatingActionButton
+    lateinit private var listDetailFragment: ListDetailFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,14 +22,13 @@ class ListDetailActivity : AppCompatActivity() {
         list = intent.getParcelableExtra(MainActivity.INTENT_LIST_KEY)
         title = list.taskName
 
+        listDetailFragment = ListDetailFragment.newInstance(list)
+
         addDetailTaskButton = findViewById(R.id.addButton)
         addDetailTaskButton.setOnClickListener { view ->
             showCreateTaskDialog()
         }
 
-        taskDetailRecyclerView = findViewById(R.id.listDetailRecyclerView)
-        taskDetailRecyclerView.layoutManager = LinearLayoutManager(this)
-        taskDetailRecyclerView.adapter = ListDetailRecycleViewAdapter(list)
 
     }
 
@@ -44,9 +44,11 @@ class ListDetailActivity : AppCompatActivity() {
                 .setPositiveButton(getString(R.string.add_task_button), { dialog, which ->
 
                     val task = taskEditText.text.toString()
-                    list.taskList.add(task)
-                    val recylerViewAdapter = ListDetailRecycleViewAdapter(list)
-                    recylerViewAdapter.notifyItemChanged(list.taskList.size)
+
+                    listDetailFragment?.let {
+                        it.addTask(task)
+                    }
+
                     dialog.dismiss()
                 }).create().show()
     }
