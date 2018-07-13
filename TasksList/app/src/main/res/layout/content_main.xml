@@ -8,11 +8,18 @@
                                              tools:context=".MainActivity"
                                              tools:showIn="@layout/activity_main">
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <fragment
+        android:id="@+id/list_selection_fragment"
+        android:name="com.example.chinnakotla.taskslist.fragments.MainFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    </FrameLayout>
+
+
 
 </android.support.constraint.ConstraintLayout>

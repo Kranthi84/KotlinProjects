@@ -23,6 +23,7 @@ class ListDetailActivity : AppCompatActivity() {
         title = list.taskName
 
         listDetailFragment = ListDetailFragment.newInstance(list)
+        supportFragmentManager.beginTransaction().add(R.id.fragment__detail_container, listDetailFragment).commit()
 
         addDetailTaskButton = findViewById(R.id.addButton)
         addDetailTaskButton.setOnClickListener { view ->
