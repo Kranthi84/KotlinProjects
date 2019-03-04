@@ -26,7 +26,10 @@ class ListRecycleViewAdapter(val tasks: ArrayList<TaskList>, val clickListener: 
         if (holder != null) {
             holder.listPosition?.text = (position + 1).toString()
             holder.listTitle?.text = tasks.get(position).taskName
-            clickListener.listItemClicked(tasks.get(position))
+            holder.itemView.setOnClickListener({
+                clickListener.listItemClicked(tasks.get(position))
+            })
+
         }
     }
 
