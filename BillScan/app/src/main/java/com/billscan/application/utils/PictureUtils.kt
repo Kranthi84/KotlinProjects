@@ -3,7 +3,9 @@ package com.billscan.application.utils
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.graphics.Point
+import android.media.ExifInterface
 import kotlin.math.roundToInt
 
 class PictureUtils {
@@ -16,7 +18,7 @@ class PictureUtils {
             return getScaledBitmap(path, size.x, size.y)
         }
 
-        fun getScaledBitmap(path: String, destWidth: Int, destHeight: Int): Bitmap {
+        private fun getScaledBitmap(path: String, destWidth: Int, destHeight: Int): Bitmap {
             var options = BitmapFactory.Options()
             options.inJustDecodeBounds = true
             BitmapFactory.decodeFile(path, options)
@@ -41,6 +43,16 @@ class PictureUtils {
             return BitmapFactory.decodeFile(path, options)
         }
 
+
+
+
+
+
+         fun rotateTheImage(source: Bitmap, angle: Float): Bitmap? {
+            var matrix = Matrix()
+            matrix.postRotate(angle)
+            return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
+        }
 
     }
 

@@ -154,13 +154,21 @@ class CameraFragment : Fragment() {
     }
 
     private fun showImageFromCamera(resultCode: Int, data: Intent?) {
+
         if (resultCode == Activity.RESULT_OK) {
             this.uri.let {
                 activity!!.revokeUriPermission(it, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             }
             viewModel.insertBill(this.file!!.path)
             val selectedImage = PictureUtils.getScaledBitmap(this.file!!.path, activity!!)
-            binding.imageView.setImageBitmap(selectedImage)
+            val rotatedImage = PictureUtils.rotateTheImage(selectedImage,90f)
+            binding.imageView.setImageBitmap(rotatedImage)
+
+       /*     val rotatedImage = PictureUtils.rotateTheImage(this.file!!.path, selectedImage)
+            rotatedImage?.let {
+                binding.imageView.setImageBitmap(selectedImage)
+            }*/
+
         }
     }
 
