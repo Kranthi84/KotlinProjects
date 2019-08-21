@@ -2,12 +2,14 @@ package com.billscan.application.view_models
 
 import android.app.Application
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.billscan.application.database.BillDao
 import com.billscan.application.database.BillEntity
 import com.billscan.application.support_classes.BillImage
+import com.billscan.application.utils.PictureUtils
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -18,6 +20,7 @@ class CameraViewModel(context: Context, application: Application, private var bi
     private var mContext: Context = context
     private var _canTakePhoto = MutableLiveData<Boolean>()
     private var _isPermissionGranted = MutableLiveData<Boolean>()
+    private var _bitMapImage = MutableLiveData<Bitmap>()
 
 
     private var viewModelJob = Job()
@@ -40,6 +43,9 @@ class CameraViewModel(context: Context, application: Application, private var bi
 
     val isPermissionGranted: LiveData<Boolean>
         get() = _isPermissionGranted
+
+    val bitMapImage: LiveData<Bitmap>
+        get() = _bitMapImage
 
     init {
         _canTakePhoto.value = false
@@ -116,6 +122,10 @@ class CameraViewModel(context: Context, application: Application, private var bi
 
     fun updatePermission(flag: Boolean) {
         _isPermissionGranted.value = flag
+    }
+
+    fun updateBitmap(bitmap: Bitmap) {
+        _bitMapImage.value = PictureUtils.run { rotateTheImage(bitmap, 90f) }
     }
 
     override fun onCleared() {

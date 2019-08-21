@@ -75,11 +75,10 @@ class CameraFragment : Fragment() {
             }
         })
 
-        viewModel.bill.observe(this, Observer {
+        viewModel.bitMapImage.observe(this, Observer {
             it?.let {
-                Log.d("TopBillFrom-Database", it.billImagePath)
+                binding.imageView.setImageBitmap(it)
             }
-
         })
 
         viewModel.bills.observe(this, Observer {
@@ -159,15 +158,14 @@ class CameraFragment : Fragment() {
             this.uri.let {
                 activity!!.revokeUriPermission(it, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             }
-            viewModel.insertBill(this.file!!.path)
+            //viewModel.insertBill(this.file!!.path)
             val selectedImage = PictureUtils.getScaledBitmap(this.file!!.path, activity!!)
-            val rotatedImage = PictureUtils.rotateTheImage(selectedImage,90f)
-            binding.imageView.setImageBitmap(rotatedImage)
+            viewModel.updateBitmap(selectedImage)
 
-       /*     val rotatedImage = PictureUtils.rotateTheImage(this.file!!.path, selectedImage)
-            rotatedImage?.let {
-                binding.imageView.setImageBitmap(selectedImage)
-            }*/
+            /*     val rotatedImage = PictureUtils.rotateTheImage(this.file!!.path, selectedImage)
+                 rotatedImage?.let {
+                     binding.imageView.setImageBitmap(selectedImage)
+                 }*/
 
         }
     }
@@ -190,7 +188,7 @@ class CameraFragment : Fragment() {
     private fun getBitmap(it: Uri) = MediaStore.Images.Media.getBitmap(activity?.contentResolver, it)
 
 
-    fun grantPermissions() {
+    private fun grantPermissions() {
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(
                 context!!,
