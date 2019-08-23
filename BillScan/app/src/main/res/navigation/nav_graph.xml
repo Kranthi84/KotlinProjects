@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/nav_graph"
-            app:startDestination="@id/listOfBillsFragment">
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:id="@+id/nav_graph"
+		app:startDestination="@id/listOfBillsFragment">
 	
 	
-	<fragment android:id="@+id/listOfBillsFragment"
-	          android:name="com.billscan.application.fragments.ListOfBillsFragment"
-	          android:label="List Of Bills"
-	          tools:layout="@layout/list_of_bills_fragment">
-		<action android:id="@+id/action_listOfBillsFragment_to_cameraFragment" app:destination="@id/cameraFragment"/>
-		<argument android:name="file_path_argument" app:argType="string"/>
+	<fragment
+			android:id="@+id/listOfBillsFragment"
+			android:name="com.billscan.application.fragments.ListOfBillsFragment"
+			android:label="List Of Bills"
+			tools:layout="@layout/list_of_bills_fragment">
+		<action
+				android:id="@+id/action_listOfBillsFragment_to_cameraFragment"
+				app:destination="@id/cameraFragment" />
+		<argument
+				android:name="file_path_argument"
+				app:argType="string" />
 	</fragment>
-	<fragment android:id="@+id/cameraFragment"
-	          android:name="com.billscan.application.fragments.CameraFragment"
-	          android:label="Camera Fragment"
-	          tools:layout="@layout/camera_fragment">
-		<action android:id="@+id/action_cameraFragment_to_listOfBillsFragment"
-		        app:destination="@id/listOfBillsFragment" app:enterAnim="@anim/fragment_close_enter"
-		        app:exitAnim="@anim/fragment_close_exit"/>
+	<fragment
+			android:id="@+id/cameraFragment"
+			android:name="com.billscan.application.fragments.CameraFragment"
+			android:label="Camera Fragment"
+			tools:layout="@layout/camera_fragment">
+		<action
+				android:id="@+id/action_cameraFragment_to_listOfBillsFragment"
+				app:destination="@id/listOfBillsFragment"
+				app:enterAnim="@anim/fragment_close_enter"
+				app:exitAnim="@anim/fragment_close_exit" />
 	</fragment>
 
 

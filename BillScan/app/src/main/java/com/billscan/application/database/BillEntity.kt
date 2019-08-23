@@ -19,6 +19,9 @@ data class BillEntity(
     var billName: String = "",
 
     @ColumnInfo(name = "bill_image_path")
-    var billImagePath: String = ""
+    var billImagePath: String = "",
+
+    @ColumnInfo(name = "bill_flag")
+    var billFlag: Boolean = false
 
 )

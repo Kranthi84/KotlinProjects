@@ -10,9 +10,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -44,6 +43,20 @@ class CameraFragment : Fragment() {
     private lateinit var viewModel: CameraViewModel
     private lateinit var viewModelFactory: CameraViewModelFactory
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val callBack = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, callBack)
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,6 +66,7 @@ class CameraFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.camera_fragment, container, false)
 
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
 
         //View Model Created
         val application = requireNotNull(this.activity!!.application)
@@ -99,6 +113,9 @@ class CameraFragment : Fragment() {
             }
         }
 
+
+        setHasOptionsMenu(true)
+
         return binding.root
     }
 
@@ -107,7 +124,10 @@ class CameraFragment : Fragment() {
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
         val cameraActivities: List<ResolveInfo> =
-            activity!!.packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            activity!!.packageManager.queryIntentActivities(
+                intent,
+                PackageManager.MATCH_DEFAULT_ONLY
+            )
 
         for (resolveInfo in cameraActivities) activity!!.grantUriPermission(
             activity!!.applicationInfo.packageName,
@@ -122,6 +142,12 @@ class CameraFragment : Fragment() {
             } else
                 grantPermissions()
 
+        })
+
+        viewModel.bill.observe(this, Observer {
+            it?.let {
+
+            }
         })
     }
 
@@ -158,7 +184,7 @@ class CameraFragment : Fragment() {
             this.uri.let {
                 activity!!.revokeUriPermission(it, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             }
-            //viewModel.insertBill(this.file!!.path)
+            viewModel.insertBill(this.file!!.path)
             val selectedImage = PictureUtils.getScaledBitmap(this.file!!.path, activity!!)
             viewModel.updateBitmap(selectedImage)
 
@@ -185,7 +211,8 @@ class CameraFragment : Fragment() {
         }
     }
 
-    private fun getBitmap(it: Uri) = MediaStore.Images.Media.getBitmap(activity?.contentResolver, it)
+    private fun getBitmap(it: Uri) =
+        MediaStore.Images.Media.getBitmap(activity?.contentResolver, it)
 
 
     private fun grantPermissions() {
@@ -206,7 +233,11 @@ class CameraFragment : Fragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         when (requestCode) {
             MY_PERMISSIONS_REQUEST_CAMERA -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
@@ -223,6 +254,22 @@ class CameraFragment : Fragment() {
 
         }
     }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.camera_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.save_menu -> {
+                viewModel.updateBill(true)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
 }
 

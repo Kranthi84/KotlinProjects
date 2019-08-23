@@ -112,6 +112,23 @@ class CameraViewModel(context: Context, application: Application, private var bi
         }
     }
 
+    fun updateBill(flag: Boolean) {
+        uiScope.launch {
+            _bill.value?.let {
+                it.billFlag = flag
+                updateBillinDatabase(it)
+            }
+
+            _bill.value = getTopBillFromDatabase()
+        }
+    }
+
+    private suspend fun updateBillinDatabase(billEntity: BillEntity) {
+        return withContext(Dispatchers.IO) {
+            billDao.updateBill(billEntity)
+        }
+    }
+
     fun createBillImage() {
         _billImage.value = BillImage(mContext)
     }
