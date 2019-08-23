@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -19,6 +20,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.billscan.application.R
 import com.billscan.application.database.BillDatabase
 import com.billscan.application.databinding.CameraFragmentBinding
@@ -49,7 +52,7 @@ class CameraFragment : Fragment() {
 
         val callBack = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-
+                findNavController().navigate(R.id.action_cameraFragment_to_listOfBillsFragment)
             }
         }
 
@@ -114,6 +117,13 @@ class CameraFragment : Fragment() {
         }
 
 
+
+        binding.galleryButton.setOnClickListener {
+            viewModel.createBillImage()
+            pickAnImage()
+        }
+
+
         setHasOptionsMenu(true)
 
         return binding.root
@@ -153,6 +163,7 @@ class CameraFragment : Fragment() {
 
     private fun pickAnImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
 
@@ -173,7 +184,10 @@ class CameraFragment : Fragment() {
         if (resultCode == Activity.RESULT_OK) {
             data?.data?.let {
                 val selectedImage = getSelectedImage(it)
-                binding.imageView.setImageBitmap(selectedImage)
+                viewModel.insertBill(this.file!!.path)
+                selectedImage?.let {
+                    viewModel.updateBitmap(selectedImage)
+                }
             }
         }
     }
@@ -264,6 +278,7 @@ class CameraFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.save_menu -> {
+
                 viewModel.updateBill(true)
             }
         }

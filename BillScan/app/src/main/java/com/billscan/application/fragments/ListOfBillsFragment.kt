@@ -45,6 +45,9 @@ class ListOfBillsFragment : Fragment() {
             .get(ListOfBillsViewModel::class.java)
         binding.floatingActionButton.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_listOfBillsFragment_to_cameraFragment))
         binding.lifecycleOwner = this
+
+        viewModel.initializeTopBill()
+
         viewModel.bill.observe(this, Observer {
 
             it?.let {

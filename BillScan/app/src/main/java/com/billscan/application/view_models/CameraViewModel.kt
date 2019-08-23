@@ -117,6 +117,7 @@ class CameraViewModel(context: Context, application: Application, private var bi
             _bill.value?.let {
                 it.billFlag = flag
                 updateBillinDatabase(it)
+                _bill.value = getTopBillFromDatabase()
             }
 
             _bill.value = getTopBillFromDatabase()

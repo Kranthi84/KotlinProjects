@@ -12,11 +12,6 @@ import kotlinx.coroutines.*
 class ListOfBillsViewModel(application: Application, private var billDao: BillDao) :
     AndroidViewModel(application) {
 
-    init {
-
-    }
-
-
     private var viewModelJob = Job()
     private var _bill = MutableLiveData<BillEntity>()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -28,6 +23,7 @@ class ListOfBillsViewModel(application: Application, private var billDao: BillDa
 
     val bill: LiveData<BillEntity>
         get() = _bill
+
 
 
     fun initializeTopBill() {
@@ -76,7 +72,6 @@ class ListOfBillsViewModel(application: Application, private var billDao: BillDa
             billDao.clearBill(id)
         }
     }
-
 
 
 }

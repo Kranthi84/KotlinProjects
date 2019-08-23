@@ -14,9 +14,6 @@
 		<action
 				android:id="@+id/action_listOfBillsFragment_to_cameraFragment"
 				app:destination="@id/cameraFragment" />
-		<argument
-				android:name="file_path_argument"
-				app:argType="string" />
 	</fragment>
 	<fragment
 			android:id="@+id/cameraFragment"
