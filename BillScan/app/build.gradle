@@ -8,6 +8,8 @@ apply plugin: 'kotlin-kapt'
 
 apply plugin: 'androidx.navigation.safeargs'
 
+apply plugin: 'com.google.gms.google-services'
+
 
 android {
     compileSdkVersion 28
@@ -60,9 +62,14 @@ dependencies {
     // optional - Guava support for Room, including Optional and ListenableFuture
     implementation "androidx.room:room-guava:$room_version"
 
+
+    implementation "com.google.firebase:firebase-core:$firebase_version"
+    implementation "com.google.firebase:firebase-ml-vision:$firebase_ml_version"
+
+
     // Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
-
+    implementation 'com.google.android.material:material:1.1.0-alpha09'
 
 
 }

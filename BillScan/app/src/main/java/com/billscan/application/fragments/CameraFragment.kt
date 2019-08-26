@@ -6,11 +6,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -21,16 +23,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
 import com.billscan.application.R
 import com.billscan.application.database.BillDatabase
+import com.billscan.application.database.BillEntity
 import com.billscan.application.databinding.CameraFragmentBinding
+import com.billscan.application.utils.FirebaseUtil
 import com.billscan.application.utils.PictureUtils
 import com.billscan.application.view_models.CameraViewModel
 import com.billscan.application.view_models.CameraViewModelFactory
+import kotlinx.android.synthetic.main.camera_fragment.*
+import kotlinx.android.synthetic.main.dialog_layout.view.*
 import java.io.File
 
-class CameraFragment : Fragment() {
+class CameraFragment : Fragment(), FirebaseUtil.View {
+
 
     private lateinit var binding: CameraFragmentBinding
     private var file: File? = null
@@ -38,6 +44,7 @@ class CameraFragment : Fragment() {
     private val CAMERA_REQUEST_CODE = 1
     private val TAKE_PHOTO = 2
     private val MY_PERMISSIONS_REQUEST_CAMERA = 3
+    private lateinit var firebaseUtil: FirebaseUtil
 
     companion object {
         fun newInstance() = CameraFragment()
@@ -57,6 +64,7 @@ class CameraFragment : Fragment() {
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(this, callBack)
+        firebaseUtil = FirebaseUtil(this)
 
     }
 
@@ -68,6 +76,7 @@ class CameraFragment : Fragment() {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.camera_fragment, container, false)
 
+
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
 
@@ -77,7 +86,7 @@ class CameraFragment : Fragment() {
         viewModelFactory = CameraViewModelFactory(context!!, application, billDao)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(CameraViewModel::class.java)
         binding.lifecycleOwner = this
-
+        grantPermissions()
         viewModel.billImage.observe(this, Observer {
             this.file = it.photoFile()!!
             this.uri = FileProvider.getUriForFile(
@@ -95,6 +104,8 @@ class CameraFragment : Fragment() {
         viewModel.bitMapImage.observe(this, Observer {
             it?.let {
                 binding.imageView.setImageBitmap(it)
+                viewModel.setImageVisible(true)
+
             }
         })
 
@@ -123,10 +134,55 @@ class CameraFragment : Fragment() {
             pickAnImage()
         }
 
+        binding.findTextButton.setOnClickListener {
+            it?.let {
+                overlay.clear()
+                val billEntity = viewModel.billWithId.value
+                billEntity?.let { billEntity ->
+                    val bitmap = createBitmapFrompath(billEntity)
+                    firebaseUtil.runTextRecogmition(bitmap)
+                }
+
+
+            }
+        }
+
+        arguments?.let {
+
+            if (!it.isEmpty) {
+                val args = CameraFragmentArgs.fromBundle(it)
+                viewModel.getBillWithId(args.billId)
+            }
+
+        }
+
+        viewModel.billWithId.observe(this, Observer {
+            it?.let {
+                val bitmap = createBitmapFrompath(it)
+                binding.imageView.setImageBitmap(bitmap)
+                viewModel.setImageVisible(true)
+            }
+        })
+
+        viewModel.isImageVisible.observe(this, Observer {
+            it?.let {
+                when {
+                    it -> binding.findTextButton.visibility = View.VISIBLE
+                    else -> binding.findTextButton.visibility = View.GONE
+                }
+            }
+        })
 
         setHasOptionsMenu(true)
 
         return binding.root
+    }
+
+    private fun createBitmapFrompath(billEntity: BillEntity): Bitmap {
+        var selectedImage =
+            PictureUtils.getScaledBitmap(billEntity.billImagePath, requireActivity())
+        selectedImage = PictureUtils.rotateTheImage(selectedImage, 90f)!!
+        return selectedImage
     }
 
 
@@ -154,11 +210,6 @@ class CameraFragment : Fragment() {
 
         })
 
-        viewModel.bill.observe(this, Observer {
-            it?.let {
-
-            }
-        })
     }
 
     private fun pickAnImage() {
@@ -202,11 +253,6 @@ class CameraFragment : Fragment() {
             val selectedImage = PictureUtils.getScaledBitmap(this.file!!.path, activity!!)
             viewModel.updateBitmap(selectedImage)
 
-            /*     val rotatedImage = PictureUtils.rotateTheImage(this.file!!.path, selectedImage)
-                 rotatedImage?.let {
-                     binding.imageView.setImageBitmap(selectedImage)
-                 }*/
-
         }
     }
 
@@ -229,8 +275,7 @@ class CameraFragment : Fragment() {
         MediaStore.Images.Media.getBitmap(activity?.contentResolver, it)
 
 
-    private fun grantPermissions() {
-        // Here, thisActivity is the current activity
+    private fun grantPermissions() =// Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(
                 context!!,
                 Manifest.permission.CAMERA
@@ -245,7 +290,6 @@ class CameraFragment : Fragment() {
         } else {
             viewModel.updatePermission(true)
         }
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -278,11 +322,67 @@ class CameraFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.save_menu -> {
-
-                viewModel.updateBill(true)
+                val bill = viewModel.bill.value
+                bill?.let {
+                    alertDialogBuilder()?.let {
+                        it.create()?.apply {
+                            this.setCanceledOnTouchOutside(false)
+                            this.show()
+                        }
+                    }
+                }
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+
+    fun alertDialogBuilder(): AlertDialog.Builder? {
+
+        val view = layoutInflater.inflate(R.layout.dialog_layout, null)
+        var builder: AlertDialog.Builder? = null
+        activity?.let {
+            builder = AlertDialog.Builder(it)
+            builder?.apply {
+                setView(view)
+                setPositiveButton(
+                    R.string.save_string
+                ) { dialogInterface, i ->
+
+                    val name = view.edit_text_bill_name.text.toString()
+                    viewModel.updateBill(true, name)
+
+                }
+
+                setNegativeButton(
+                    R.string.cancel_string
+                )
+                { dialoginterface, i ->
+                    dialoginterface.cancel()
+                }
+            }
+        }
+        return builder
+    }
+
+    override fun showHandle(text: String, boundingBox: Rect?) {
+        overlay.addText(text, boundingBox)
+    }
+
+    override fun showBox(boundingBox: Rect?) {
+        overlay.addBox(boundingBox)
+    }
+
+    override fun showNoTextMessage() {
+        Toast.makeText(activity!!, "No text detected", Toast.LENGTH_LONG).show()
+    }
+
+    override fun showProgress() {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    override fun hideProgress() {
+        progressBar.visibility = View.GONE
     }
 
 

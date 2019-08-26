@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "422617608994",
+    "firebase_url": "https://mlkit-328ca.firebaseio.com",
+    "project_id": "mlkit-328ca",
+    "storage_bucket": "mlkit-328ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422617608994:android:0718f948c5dd3af4",
+        "android_client_info": {
+          "package_name": "com.billscan.application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "422617608994-810gpc1f5868odjos3j2ifldmth36su9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6cz2rcJEngBPmWC7Rfkb4MZV-nXiqvkg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "422617608994-810gpc1f5868odjos3j2ifldmth36su9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

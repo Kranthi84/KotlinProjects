@@ -16,6 +16,7 @@ import java.util.*
 class CameraViewModel(context: Context, application: Application, private var billDao: BillDao) :
     AndroidViewModel(application) {
 
+    private var _isImageVisible = MutableLiveData<Boolean>()
     private var _billImage = MutableLiveData<BillImage>()
     private var mContext: Context = context
     private var _canTakePhoto = MutableLiveData<Boolean>()
@@ -28,6 +29,14 @@ class CameraViewModel(context: Context, application: Application, private var bi
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     private var _bills = MutableLiveData<List<BillEntity>>()
+
+    private var _billWithId = MutableLiveData<BillEntity>()
+
+    val isImageVisible: LiveData<Boolean>
+        get() = _isImageVisible
+
+    val billWithId: LiveData<BillEntity>
+        get() = _billWithId
 
     val bills: LiveData<List<BillEntity>>
         get() = _bills
@@ -50,18 +59,21 @@ class CameraViewModel(context: Context, application: Application, private var bi
     init {
         _canTakePhoto.value = false
         _isPermissionGranted.value = false
+        _isImageVisible.value = false
         getAllBills()
         initializeTopBill()
     }
 
     fun initializeTopBill() {
 
-
         uiScope.launch {
             _bill.value = getTopBillFromDatabase()
         }
 
+    }
 
+    fun setImageVisible(flag: Boolean) {
+        _isImageVisible.value = flag
     }
 
     private suspend fun getTopBillFromDatabase(): BillEntity? {
@@ -112,10 +124,24 @@ class CameraViewModel(context: Context, application: Application, private var bi
         }
     }
 
-    fun updateBill(flag: Boolean) {
+    fun getBillWithId(id: Long) {
+        uiScope.launch {
+            _billWithId.value = getBillWithIdfromDatabase(id)
+        }
+    }
+
+    private suspend fun getBillWithIdfromDatabase(id: Long): BillEntity? {
+        return withContext(Dispatchers.IO) {
+            billDao.getBill(id)
+        }
+    }
+
+
+    fun updateBill(flag: Boolean, name: String) {
         uiScope.launch {
             _bill.value?.let {
                 it.billFlag = flag
+                it.billName = name
                 updateBillinDatabase(it)
                 _bill.value = getTopBillFromDatabase()
             }

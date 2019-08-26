@@ -9,7 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.billscan.application.R
+import com.billscan.application.adapters.ImageRecyclerAdapter
 import com.billscan.application.database.BillDatabase
 import com.billscan.application.databinding.ListOfBillsFragmentBinding
 import com.billscan.application.view_models.ListOfBillsViewModel
@@ -20,6 +24,8 @@ class ListOfBillsFragment : Fragment() {
 
     private lateinit var binding: ListOfBillsFragmentBinding
     private lateinit var viewModel: ListOfBillsViewModel
+    var recyclerView: RecyclerView? = null
+    var adapter: ImageRecyclerAdapter? = null
 
     companion object {
         fun newInstance() = ListOfBillsFragment()
@@ -33,6 +39,13 @@ class ListOfBillsFragment : Fragment() {
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.list_of_bills_fragment, container, false)
+        recyclerView = binding.idCameraView
+        recyclerView?.let {
+            it.layoutManager = LinearLayoutManager(this.context)
+        }
+
+
+
         return binding.root
 
     }
@@ -48,6 +61,8 @@ class ListOfBillsFragment : Fragment() {
 
         viewModel.initializeTopBill()
 
+        viewModel.getAllBills()
+
         viewModel.bill.observe(this, Observer {
 
             it?.let {
@@ -55,6 +70,24 @@ class ListOfBillsFragment : Fragment() {
                     File(it.billImagePath).delete()
                     viewModel.clearBill(it.billNum)
                 }
+            }
+        })
+
+        viewModel.bills.observe(this, Observer { list ->
+            list?.let {
+                adapter =
+                    ImageRecyclerAdapter(list, ImageRecyclerAdapter.BillsSelectListener { billId ->
+                        run {
+                            findNavController().navigate(
+                                ListOfBillsFragmentDirections.actionListOfBillsFragmentToCameraFragment(billId)
+                            )
+                        }
+                    })
+
+            }
+
+            recyclerView?.let {
+                it.adapter = adapter
             }
         })
     }

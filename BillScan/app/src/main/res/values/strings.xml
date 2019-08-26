@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 	<string name="app_name">My Application</string>
 	<string name="cam_img_view">camera_image_view</string>
 	<string name="button_camera">camera_button</string>
@@ -7,4 +7,9 @@
 	<string name="bill_name">Enter a name for the bill</string>
 	<string name="save_string">Save</string>
 	<string name="cancel_string">Cancel</string>
+	<string name="date_string">Date</string>
+	<string name="name_string">Name</string>
+	<string name="list_title">Click on each item to see the bills</string>
+	<string name="find_button" >Find text in the Image</string>
+
 </resources>
