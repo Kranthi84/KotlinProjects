@@ -43,11 +43,6 @@ class PictureUtils {
             return BitmapFactory.decodeFile(path, options)
         }
 
-
-
-
-
-
          fun rotateTheImage(source: Bitmap, angle: Float): Bitmap? {
             var matrix = Matrix()
             matrix.postRotate(angle)

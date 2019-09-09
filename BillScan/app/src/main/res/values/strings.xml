@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 	<string name="app_name">My Application</string>
 	<string name="cam_img_view">camera_image_view</string>
 	<string name="button_camera">camera_button</string>
@@ -6,10 +6,16 @@
 	<string name="camera_menu_save">Save</string>
 	<string name="bill_name">Enter a name for the bill</string>
 	<string name="save_string">Save</string>
+	<string name="ok_string">OK</string>
 	<string name="cancel_string">Cancel</string>
 	<string name="date_string">Date</string>
 	<string name="name_string">Name</string>
 	<string name="list_title">Click on each item to see the bills</string>
-	<string name="find_button" >Find text in the Image</string>
+	<string name="find_button">Find text in the Image</string>
+	<string name="select_image_for_text_recognition">Select image for text recognition.</string>
+	<string name="tv_website_placeholder"><a>goto: <u><b>%1$s</b></u></a></string>
+	<string name="tv_survey_text">Survey Text</string>
+	<string name="tv_amount_placeholder">Total Amount: <b>%1$d</b></string>
+
 
 </resources>

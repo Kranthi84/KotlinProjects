@@ -9,9 +9,11 @@ import androidx.lifecycle.MutableLiveData
 import com.billscan.application.database.BillDao
 import com.billscan.application.database.BillEntity
 import com.billscan.application.support_classes.BillImage
+import com.billscan.application.support_classes.ImageText
 import com.billscan.application.utils.PictureUtils
 import kotlinx.coroutines.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 class CameraViewModel(context: Context, application: Application, private var billDao: BillDao) :
     AndroidViewModel(application) {
@@ -22,8 +24,8 @@ class CameraViewModel(context: Context, application: Application, private var bi
     private var _canTakePhoto = MutableLiveData<Boolean>()
     private var _isPermissionGranted = MutableLiveData<Boolean>()
     private var _bitMapImage = MutableLiveData<Bitmap>()
-
-
+    private var _listOfTexts = MutableLiveData<MutableList<String>>()
+    private var _listOfWebsites = MutableLiveData<MutableList<String>>()
     private var viewModelJob = Job()
     private var _bill = MutableLiveData<BillEntity>()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
@@ -31,6 +33,8 @@ class CameraViewModel(context: Context, application: Application, private var bi
     private var _bills = MutableLiveData<List<BillEntity>>()
 
     private var _billWithId = MutableLiveData<BillEntity>()
+
+    private var _imageText = MutableLiveData<ImageText>()
 
     val isImageVisible: LiveData<Boolean>
         get() = _isImageVisible
@@ -56,12 +60,59 @@ class CameraViewModel(context: Context, application: Application, private var bi
     val bitMapImage: LiveData<Bitmap>
         get() = _bitMapImage
 
+    val listOfTexts: LiveData<MutableList<String>>
+        get() = _listOfTexts
+
+    val imageText: LiveData<ImageText>
+        get() = _imageText
+
+    val listOfWebSites: LiveData<MutableList<String>>
+        get() = _listOfWebsites
+
     init {
         _canTakePhoto.value = false
         _isPermissionGranted.value = false
         _isImageVisible.value = false
+        _listOfTexts.value = ArrayList()
+        _listOfWebsites.value = ArrayList()
         getAllBills()
         initializeTopBill()
+    }
+
+    fun addToTheList(textList: List<String>) {
+
+        _listOfTexts.value?.addAll(textList)
+
+        textList.forEach {
+            if (looksLikeHandle(it))
+                _listOfWebsites.value?.add(it)
+        }
+
+        createImageText()
+
+    }
+
+    fun createImageText() {
+        _listOfWebsites.value?.let {
+            if (it.isNotEmpty()) {
+                // Fetch the text after last website link in the text.
+                val indexOfLastWebsiteLink = _listOfTexts.value?.indexOf(it.last())
+                val sBuilder = StringBuilder()
+                val indexOflastString = _listOfTexts.value?.indexOf(_listOfTexts.value?.last())
+
+                var i = indexOfLastWebsiteLink?.plus(1)
+
+                while (i!! <= indexOflastString!!) {
+                    sBuilder.append(_listOfTexts.value!![i])
+                    i = i.plus(1)
+                }
+                val lastWebsite = it[it.size.minus(1)]
+                val surveyText = sBuilder.toString()
+
+                _imageText.value = ImageText(lastWebsite, surveyText, 0.00)
+            }
+
+        }
     }
 
     fun initializeTopBill() {
@@ -171,6 +222,9 @@ class CameraViewModel(context: Context, application: Application, private var bi
     fun updateBitmap(bitmap: Bitmap) {
         _bitMapImage.value = PictureUtils.run { rotateTheImage(bitmap, 90f) }
     }
+
+    private fun looksLikeHandle(text: String) =
+        text.matches(Regex("^(https?://)?(www\\.)?([\\w]+\\.)+[‌​\\w]{2,63}/?$"))
 
     override fun onCleared() {
         super.onCleared()

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.Bitmap
-import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -27,11 +26,12 @@ import com.billscan.application.R
 import com.billscan.application.database.BillDatabase
 import com.billscan.application.database.BillEntity
 import com.billscan.application.databinding.CameraFragmentBinding
+import com.billscan.application.support_classes.ImageText
 import com.billscan.application.utils.FirebaseUtil
 import com.billscan.application.utils.PictureUtils
 import com.billscan.application.view_models.CameraViewModel
 import com.billscan.application.view_models.CameraViewModelFactory
-import kotlinx.android.synthetic.main.camera_fragment.*
+import kotlinx.android.synthetic.main.dialog_find_text_layout.view.*
 import kotlinx.android.synthetic.main.dialog_layout.view.*
 import java.io.File
 
@@ -39,12 +39,13 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
 
 
     private lateinit var binding: CameraFragmentBinding
+    private lateinit var firebaseUtil: FirebaseUtil
     private var file: File? = null
     private lateinit var uri: Uri
     private val CAMERA_REQUEST_CODE = 1
     private val TAKE_PHOTO = 2
     private val MY_PERMISSIONS_REQUEST_CAMERA = 3
-    private lateinit var firebaseUtil: FirebaseUtil
+
 
     companion object {
         fun newInstance() = CameraFragment()
@@ -65,6 +66,7 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
 
         requireActivity().onBackPressedDispatcher.addCallback(this, callBack)
         firebaseUtil = FirebaseUtil(this)
+
 
     }
 
@@ -136,14 +138,11 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
 
         binding.findTextButton.setOnClickListener {
             it?.let {
-                overlay.clear()
                 val billEntity = viewModel.billWithId.value
-                billEntity?.let { billEntity ->
-                    val bitmap = createBitmapFrompath(billEntity)
-                    firebaseUtil.runTextRecogmition(bitmap)
+                billEntity?.let { bill ->
+                    val bitMap = createBitmapFrompath(bill)
+                    firebaseUtil.runTextRecogmition(bitMap)
                 }
-
-
             }
         }
 
@@ -172,6 +171,17 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
                 }
             }
         })
+
+        viewModel.imageText.observe(this, Observer {
+            alertDialogBuilderForFindingText(it)?.let { builder ->
+                builder.create().apply {
+                    this.setCanceledOnTouchOutside(false)
+                    this.show()
+                }
+            }
+
+        })
+
 
         setHasOptionsMenu(true)
 
@@ -365,27 +375,48 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
         return builder
     }
 
-    override fun showHandle(text: String, boundingBox: Rect?) {
-        overlay.addText(text, boundingBox)
-    }
+    fun alertDialogBuilderForFindingText(imageText: ImageText): AlertDialog.Builder? {
 
-    override fun showBox(boundingBox: Rect?) {
-        overlay.addBox(boundingBox)
+        val view = layoutInflater.inflate(R.layout.dialog_find_text_layout, null)
+
+
+        view.tv_survey.text = imageText.surveyText
+        view.tv_website.text = imageText.website
+
+        var builder: AlertDialog.Builder? = null
+        activity?.let {
+            builder = AlertDialog.Builder(it)
+            builder?.apply {
+                setView(view)
+                setPositiveButton(
+                    R.string.ok_string
+                ) { dialogInterface, i ->
+
+                    dialogInterface.dismiss()
+
+                }
+
+            }
+        }
+        return builder
     }
 
     override fun showNoTextMessage() {
-        Toast.makeText(activity!!, "No text detected", Toast.LENGTH_LONG).show()
+        Toast.makeText(activity, "No Text", Toast.LENGTH_SHORT).show()
     }
 
+    override fun showHandle(textList: List<String>) {
+        viewModel.addToTheList(textList)
+    }
+
+
     override fun showProgress() {
-        progressBar.visibility = View.VISIBLE
+        binding.progressCircular.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
-        progressBar.visibility = View.GONE
+        binding.progressCircular.visibility = View.GONE
     }
-
-
 }
 
 

@@ -1,7 +1,6 @@
 package com.billscan.application.utils
 
 import android.graphics.Bitmap
-import android.graphics.Rect
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
@@ -28,24 +27,24 @@ class FirebaseUtil(val view: View) {
             view.showNoTextMessage()
             return
         }
+        val listOftexts = ArrayList<String>()
         blocks.forEach { block ->
             block.lines.forEach { line ->
                 line.elements.forEach { element ->
-                    if (looksLikeHandle(element.text)) {
-                        view.showHandle(element.text, element.boundingBox)
-                    }
+                    listOftexts.add(element.text)
+
                 }
             }
         }
+
+        view.showHandle(listOftexts)
+
     }
 
-    private fun looksLikeHandle(text: String) =
-        text.matches(Regex("@(\\w+)"))
 
     interface View {
         fun showNoTextMessage()
-        fun showHandle(text: String, boundingBox: Rect?)
-        fun showBox(boundingBox: Rect?)
+        fun showHandle(textList: List<String>)
         fun showProgress()
         fun hideProgress()
     }

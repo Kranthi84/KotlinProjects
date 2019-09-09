@@ -10,9 +10,11 @@
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:ems="10"
+			android:fontFamily="@font/convergence"
 			android:gravity="center|top"
 			android:hint="@string/bill_name"
-			android:inputType="textMultiLine" />
+			android:inputType="textMultiLine"
+			android:textSize="20sp" />
 
 
 </LinearLayout>

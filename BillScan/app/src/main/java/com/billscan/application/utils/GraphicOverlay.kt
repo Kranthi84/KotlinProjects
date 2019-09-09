@@ -49,4 +49,13 @@ class GraphicOverlay(context: Context, attributeSet: AttributeSet) : View(contex
     fun addBox(boundingBox: Rect?) {
         add(TextGraphic(this, boundingBox, Color.RED))
     }
+
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+        synchronized(lock) {
+            for (graphic in graphics) {
+                canvas?.let { graphic.draw(it) }
+            }
+        }
+    }
 }

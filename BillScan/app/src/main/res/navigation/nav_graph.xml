@@ -28,6 +28,23 @@
 		<argument
 				android:name="bill_id"
 				app:argType="long" />
+		<action
+				android:id="@+id/action_cameraFragment_to_imageFragment2"
+				app:destination="@id/imageFragment"
+				app:enterAnim="@anim/fragment_fade_enter"
+				app:exitAnim="@anim/fragment_fade_exit" />
+	</fragment>
+	<fragment
+			android:id="@+id/imageFragment"
+			android:name="com.billscan.application.fragments.ImageFragment"
+			android:label="image_layout"
+			tools:layout="@layout/image_layout" >
+		<argument
+				android:name="billNum"
+				app:argType="long" />
+		<action
+				android:id="@+id/action_imageFragment_to_cameraFragment"
+				app:destination="@id/cameraFragment" />
 	</fragment>
 
 
