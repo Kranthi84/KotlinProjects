@@ -7,7 +7,11 @@ import com.billscan.application.database.BillEntity
 import com.billscan.application.databinding.RecyclerViewLayoutBinding
 
 
-class ImageRecyclerAdapter(var data: List<BillEntity>, var selectListener: BillsSelectListener) :
+class ImageRecyclerAdapter(
+    var data: List<BillEntity>,
+    var selectListener: BillsSelectListener,
+    var deleteListener: BillsSelectListener
+) :
     RecyclerView.Adapter<ImageRecyclerAdapter.ImageViewHolder>() {
 
     init {
@@ -24,16 +28,21 @@ class ImageRecyclerAdapter(var data: List<BillEntity>, var selectListener: Bills
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.bind(data[position], selectListener)
+        holder.bind(data[position], selectListener, deleteListener)
     }
 
 
     class ImageViewHolder private constructor(val binding: RecyclerViewLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(bill: BillEntity, selectListener: BillsSelectListener) {
+        fun bind(
+            bill: BillEntity,
+            selectListener: BillsSelectListener,
+            deleteListener: BillsSelectListener
+        ) {
             binding.billEntity = bill
             binding.billListener = selectListener
+            binding.billDeleteListener = deleteListener
             binding.nameTextView.text = bill.billName
             binding.dateTextView.text = bill.billDate
             binding.executePendingBindings()

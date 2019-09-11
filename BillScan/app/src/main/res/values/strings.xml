@@ -16,6 +16,7 @@
 	<string name="tv_website_placeholder"><a>goto: <u><b>%1$s</b></u></a></string>
 	<string name="tv_survey_text">Survey Text</string>
 	<string name="tv_amount_placeholder">Total Amount: <b>%1$d</b></string>
+	<string name="delete">delete</string>
 
 
 </resources>

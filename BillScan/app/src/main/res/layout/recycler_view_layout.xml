@@ -11,6 +11,10 @@
 		<variable
 				name="billListener"
 				type="com.billscan.application.adapters.ImageRecyclerAdapter.BillsSelectListener" />
+		
+		<variable
+				name="billDeleteListener"
+				type="com.billscan.application.adapters.ImageRecyclerAdapter.BillsSelectListener" />
 	</data>
 	
 	<androidx.constraintlayout.widget.ConstraintLayout
@@ -40,10 +44,25 @@
 				android:fontFamily="@font/convergence"
 				android:text="@string/name_string"
 				android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintBottom_toTopOf="@+id/delete_record"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
 				app:layout_constraintTop_toBottomOf="@+id/date_textView" />
+		
+		<TextView
+				android:background="@drawable/delete_button_shape"
+				android:id="@+id/delete_record"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:fontFamily="@font/convergence"
+				android:onClick="@{()->billDeleteListener.onClick(billEntity)}"
+				android:padding="8dp"
+				android:text="@string/delete"
+				android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+				android:textColor="@color/cardview_light_background"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toBottomOf="@+id/name_textView" />
 	
 	
 	</androidx.constraintlayout.widget.ConstraintLayout>

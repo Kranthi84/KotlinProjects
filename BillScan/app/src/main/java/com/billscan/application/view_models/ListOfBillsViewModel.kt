@@ -25,7 +25,6 @@ class ListOfBillsViewModel(application: Application, private var billDao: BillDa
         get() = _bill
 
 
-
     fun initializeTopBill() {
 
 
@@ -64,6 +63,7 @@ class ListOfBillsViewModel(application: Application, private var billDao: BillDa
     fun clearBill(id: Long) {
         uiScope.launch {
             clearBillFromDatabase(id)
+            getAllBills()
         }
     }
 

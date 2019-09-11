@@ -31,6 +31,10 @@ class ListOfBillsFragment : Fragment() {
         fun newInstance() = ListOfBillsFragment()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getAllBills()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,7 +65,7 @@ class ListOfBillsFragment : Fragment() {
 
         viewModel.initializeTopBill()
 
-        viewModel.getAllBills()
+
 
         viewModel.bill.observe(this, Observer {
 
@@ -79,9 +83,13 @@ class ListOfBillsFragment : Fragment() {
                     ImageRecyclerAdapter(list, ImageRecyclerAdapter.BillsSelectListener { billId ->
                         run {
                             findNavController().navigate(
-                                ListOfBillsFragmentDirections.actionListOfBillsFragmentToCameraFragment(billId)
+                                ListOfBillsFragmentDirections.actionListOfBillsFragmentToCameraFragment(
+                                    billId
+                                )
                             )
                         }
+                    }, ImageRecyclerAdapter.BillsSelectListener { billId ->
+                        viewModel.clearBill(billId)
                     })
 
             }

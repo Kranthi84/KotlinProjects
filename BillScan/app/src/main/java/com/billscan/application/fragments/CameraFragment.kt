@@ -45,6 +45,7 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
     private val CAMERA_REQUEST_CODE = 1
     private val TAKE_PHOTO = 2
     private val MY_PERMISSIONS_REQUEST_CAMERA = 3
+    private var myMenu: Menu? = null
 
 
     companion object {
@@ -121,7 +122,7 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
 
         binding.cameraButton.setOnClickListener {
             viewModel.createBillImage()
-
+            viewModel.setGalleryImagePicked(false)
             viewModel.canTakePhoto.value?.let {
                 if (it) {
                     takeAnImage(intent)
@@ -133,6 +134,7 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
 
         binding.galleryButton.setOnClickListener {
             viewModel.createBillImage()
+            viewModel.setGalleryImagePicked(true)
             pickAnImage()
         }
 
@@ -142,6 +144,13 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
                 billEntity?.let { bill ->
                     val bitMap = createBitmapFrompath(bill)
                     firebaseUtil.runTextRecogmition(bitMap)
+                }
+
+                if (billEntity == null) {
+                    val bitmap = viewModel.bitMapImage.value
+                    bitmap?.let { image ->
+                        firebaseUtil.runTextRecogmition(image)
+                    }
                 }
             }
         }
@@ -166,8 +175,12 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
         viewModel.isImageVisible.observe(this, Observer {
             it?.let {
                 when {
-                    it -> binding.findTextButton.visibility = View.VISIBLE
-                    else -> binding.findTextButton.visibility = View.GONE
+                    it -> {
+                        binding.findTextButton.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        binding.findTextButton.visibility = View.GONE
+                    }
                 }
             }
         })
@@ -180,6 +193,16 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
                 }
             }
 
+        })
+
+
+        viewModel.isImageGalleryPicked.observe(this, Observer { bool ->
+            bool?.let { internalBool ->
+                myMenu?.let {
+                    it.findItem(R.id.save_menu).isVisible = !internalBool
+                }
+
+            }
         })
 
 
@@ -224,7 +247,6 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
 
     private fun pickAnImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
 
@@ -245,7 +267,6 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
         if (resultCode == Activity.RESULT_OK) {
             data?.data?.let {
                 val selectedImage = getSelectedImage(it)
-                viewModel.insertBill(this.file!!.path)
                 selectedImage?.let {
                     viewModel.updateBitmap(selectedImage)
                 }
@@ -261,8 +282,7 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
             }
             viewModel.insertBill(this.file!!.path)
             val selectedImage = PictureUtils.getScaledBitmap(this.file!!.path, activity!!)
-            viewModel.updateBitmap(selectedImage)
-
+            viewModel.updateBitmapAndRotate(selectedImage)
         }
     }
 
@@ -326,6 +346,7 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
+        myMenu = menu
         inflater.inflate(R.menu.camera_menu, menu)
     }
 

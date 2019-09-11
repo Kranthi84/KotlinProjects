@@ -36,6 +36,11 @@ class CameraViewModel(context: Context, application: Application, private var bi
 
     private var _imageText = MutableLiveData<ImageText>()
 
+    private var _isImageGalleryPicked = MutableLiveData<Boolean>()
+
+    val isImageGalleryPicked: LiveData<Boolean>
+        get() = _isImageGalleryPicked
+
     val isImageVisible: LiveData<Boolean>
         get() = _isImageVisible
 
@@ -75,6 +80,7 @@ class CameraViewModel(context: Context, application: Application, private var bi
         _isImageVisible.value = false
         _listOfTexts.value = ArrayList()
         _listOfWebsites.value = ArrayList()
+        _isImageGalleryPicked.value = false
         getAllBills()
         initializeTopBill()
     }
@@ -219,8 +225,16 @@ class CameraViewModel(context: Context, application: Application, private var bi
         _isPermissionGranted.value = flag
     }
 
-    fun updateBitmap(bitmap: Bitmap) {
+    fun updateBitmapAndRotate(bitmap: Bitmap) {
         _bitMapImage.value = PictureUtils.run { rotateTheImage(bitmap, 90f) }
+    }
+
+    fun updateBitmap(bitmap: Bitmap) {
+        _bitMapImage.value = bitmap
+    }
+
+    fun setGalleryImagePicked(flag: Boolean) {
+        _isImageGalleryPicked.value = flag
     }
 
     private fun looksLikeHandle(text: String) =
