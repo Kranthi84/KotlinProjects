@@ -22,7 +22,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.billscan.application.R
+import com.billscan.application.adapters.TextViewRecyclerAdapter
 import com.billscan.application.database.BillDatabase
 import com.billscan.application.database.BillEntity
 import com.billscan.application.databinding.CameraFragmentBinding
@@ -399,10 +401,17 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
     fun alertDialogBuilderForFindingText(imageText: ImageText): AlertDialog.Builder? {
 
         val view = layoutInflater.inflate(R.layout.dialog_find_text_layout, null)
-
-
         view.tv_survey.text = imageText.surveyText
-        view.tv_website.text = imageText.website
+        val textViewAdapter = TextViewRecyclerAdapter(imageText.websites,
+            TextViewRecyclerAdapter.TextViewListener { website ->
+                val uri = Uri.parse(website)
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                intent.resolveActivity(activity!!.packageManager!!)?.let {
+                    startActivity(intent)
+                }
+            })
+        view.textView_Recycler.layoutManager = LinearLayoutManager(context)
+        view.textView_Recycler.adapter = textViewAdapter
 
         var builder: AlertDialog.Builder? = null
         activity?.let {

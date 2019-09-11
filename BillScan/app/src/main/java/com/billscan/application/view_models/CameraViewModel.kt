@@ -3,6 +3,8 @@ package com.billscan.application.view_models
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
+import android.webkit.URLUtil
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -90,8 +92,17 @@ class CameraViewModel(context: Context, application: Application, private var bi
         _listOfTexts.value?.addAll(textList)
 
         textList.forEach {
-            if (looksLikeHandle(it))
-                _listOfWebsites.value?.add(it)
+            if (looksLikeHandle(it)) {
+                if (URLUtil.isValidUrl(it)) {
+                    _listOfWebsites.value?.add(it)
+                } else {
+                    val url = Uri.Builder().scheme("https").authority(it).build().toString()
+                    _listOfWebsites.value?.add(url)
+                }
+
+            }
+
+
         }
 
         createImageText()
@@ -112,10 +123,10 @@ class CameraViewModel(context: Context, application: Application, private var bi
                     sBuilder.append(_listOfTexts.value!![i])
                     i = i.plus(1)
                 }
-                val lastWebsite = it[it.size.minus(1)]
+                //  val lastWebsite = it[it.size.minus(1)]
                 val surveyText = sBuilder.toString()
 
-                _imageText.value = ImageText(lastWebsite, surveyText, 0.00)
+                _imageText.value = ImageText(it, surveyText, 0.00)
             }
 
         }

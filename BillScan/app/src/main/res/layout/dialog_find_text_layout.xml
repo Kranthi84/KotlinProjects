@@ -4,17 +4,14 @@
 		android:layout_height="wrap_content"
 		android:orientation="vertical">
 	
-	<TextView
-			android:id="@+id/tv_website"
+	<androidx.recyclerview.widget.RecyclerView
+			android:id="@+id/textView_Recycler"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:fontFamily="@font/convergence"
-			android:gravity="center"
-			android:maxLines="3"
-			android:padding="10dp"
-			android:text="@string/tv_website_placeholder"
-			android:textColor="@color/colorAccent"
-			android:textSize="18sp" />
+			android:layout_height="wrap_content">
+	
+	</androidx.recyclerview.widget.RecyclerView>
+	
+
 	
 	<TextView
 			android:id="@+id/tv_survey"
