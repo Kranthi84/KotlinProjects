@@ -11,7 +11,7 @@
 	<string name="date_string">Date</string>
 	<string name="name_string">Name</string>
 	<string name="list_title">Click on each item to see the bills</string>
-	<string name="find_button">Find text in the Image</string>
+	<string name="find_button">Scan Image</string>
 	<string name="select_image_for_text_recognition">Select image for text recognition.</string>
 	<string name="tv_website_placeholder"><a>goto: <u><b>%1$s</b></u></a></string>
 	<string name="tv_survey_text">Survey Text</string>

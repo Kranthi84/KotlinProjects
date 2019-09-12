@@ -89,17 +89,13 @@ class CameraViewModel(context: Context, application: Application, private var bi
 
     fun addToTheList(textList: List<String>) {
 
+        _listOfTexts.value?.clear()
+        _listOfWebsites.value?.clear()
         _listOfTexts.value?.addAll(textList)
 
         textList.forEach {
             if (looksLikeHandle(it)) {
-                if (URLUtil.isValidUrl(it)) {
-                    _listOfWebsites.value?.add(it)
-                } else {
-                    val url = Uri.Builder().scheme("https").authority(it).build().toString()
-                    _listOfWebsites.value?.add(url)
-                }
-
+                _listOfWebsites.value?.add(it)
             }
 
 
@@ -110,6 +106,7 @@ class CameraViewModel(context: Context, application: Application, private var bi
     }
 
     fun createImageText() {
+        var finalList = ArrayList<String>()
         _listOfWebsites.value?.let {
             if (it.isNotEmpty()) {
                 // Fetch the text after last website link in the text.
@@ -126,7 +123,20 @@ class CameraViewModel(context: Context, application: Application, private var bi
                 //  val lastWebsite = it[it.size.minus(1)]
                 val surveyText = sBuilder.toString()
 
-                _imageText.value = ImageText(it, surveyText, 0.00)
+
+                for (website in it) {
+                    if (!URLUtil.isValidUrl(website)) {
+                        val url =
+                            Uri.Builder().scheme("https").authority(website).build().toString()
+                        finalList.add(url)
+                    } else {
+                        finalList.add(website)
+                    }
+                }
+
+
+
+                _imageText.value = ImageText(finalList, surveyText, 0.00)
             }
 
         }
@@ -249,7 +259,7 @@ class CameraViewModel(context: Context, application: Application, private var bi
     }
 
     private fun looksLikeHandle(text: String) =
-        text.matches(Regex("^(https?://)?(www\\.)?([\\w]+\\.)+[‌​\\w]{2,63}/?$"))
+        text.matches(Regex("^(https?://)?(www\\.)?([\\w]+\\.)+[‌​\\w]{2,63}?/?[\\w]{0,100}?$"))
 
     override fun onCleared() {
         super.onCleared()

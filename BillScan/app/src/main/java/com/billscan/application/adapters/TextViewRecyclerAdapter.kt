@@ -1,11 +1,11 @@
 package com.billscan.application.adapters
 
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.billscan.application.databinding.RecyclerTextviewLayoutBinding
+import com.billscan.application.R
+import kotlinx.android.synthetic.main.recycler_textview_layout.view.*
 
 
 class TextViewRecyclerAdapter(var list: List<String>, var textListener: TextViewListener) :
@@ -30,26 +30,28 @@ class TextViewRecyclerAdapter(var list: List<String>, var textListener: TextView
     }
 
 
-    class TextViewHolder private constructor(private val binding: RecyclerTextviewLayoutBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class TextViewHolder private constructor(private val view: View) :
+        RecyclerView.ViewHolder(view) {
 
 
         fun bind(item: String, listener: TextViewListener) {
-            binding.websiteName = item
-            binding.webSiteListener = listener
+
+            view.tv_website.text = item
+            view.tv_website.setOnClickListener {
+
+                listener.onClick(item)
+
+            }
+
         }
 
 
         companion object {
             fun from(parent: ViewGroup): TextViewHolder {
 
-                val binding = RecyclerTextviewLayoutBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
-                )
-
-                return TextViewHolder(binding)
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.recycler_textview_layout, parent, false)
+                return TextViewHolder(view)
             }
         }
     }

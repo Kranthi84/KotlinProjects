@@ -436,6 +436,7 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
     }
 
     override fun showHandle(textList: List<String>) {
+
         viewModel.addToTheList(textList)
     }
 
