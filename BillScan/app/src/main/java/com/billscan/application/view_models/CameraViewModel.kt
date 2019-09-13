@@ -126,8 +126,19 @@ class CameraViewModel(context: Context, application: Application, private var bi
 
                 for (website in it) {
                     if (!URLUtil.isValidUrl(website)) {
+                        var authority = website
+                        var pathParam = ""
+                        if (website.contains("/")) {
+                            val arr = website.split("/")
+
+                            authority = arr[0]
+
+                            if (arr.size == 2)
+                                pathParam = arr[1]
+                        }
                         val url =
-                            Uri.Builder().scheme("https").authority(website).build().toString()
+                            Uri.Builder().scheme("https").authority(authority).appendPath(pathParam)
+                                .build().toString()
                         finalList.add(url)
                     } else {
                         finalList.add(website)
@@ -137,6 +148,8 @@ class CameraViewModel(context: Context, application: Application, private var bi
 
 
                 _imageText.value = ImageText(finalList, surveyText, 0.00)
+            } else {
+                _imageText.value = ImageText(_listOfWebsites.value!!, "No Websites", 0.00)
             }
 
         }

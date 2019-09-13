@@ -4,6 +4,18 @@
 		android:layout_height="wrap_content"
 		android:orientation="vertical">
 	
+	<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@color/colorPrimaryDark"
+			android:fontFamily="@font/convergence"
+			android:gravity="center"
+			android:padding="10dp"
+			android:text="@string/dialog_title"
+			android:textColor="@color/common_google_signin_btn_text_dark_pressed"
+			android:textSize="18sp"
+			android:textStyle="bold" />
+	
 	<androidx.recyclerview.widget.RecyclerView
 			android:id="@+id/textView_Recycler"
 			android:layout_width="match_parent"
@@ -28,15 +40,18 @@
 				android:textSize="18sp" />
 	</ScrollView>
 	
-	<!--	<TextView
-				android:id="@+id/tv_amount"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:fontFamily="@font/convergence"
-				android:gravity="center"
-				android:maxLines="2"
-				android:padding="10dp"
-				android:text="@string/tv_amount_placeholder"
-				android:textSize="18sp" />-->
+	<TextView
+			android:id="@+id/tv_info"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:fontFamily="@font/convergence"
+			android:gravity="center"
+			android:maxLines="2"
+			android:padding="10dp"
+			android:text="@string/tv_info_placeholder"
+			android:textColor="@color/colorPrimary"
+			android:textSize="12sp"
+			android:textStyle="italic"
+			android:visibility="gone" />
 
 </LinearLayout>

@@ -402,6 +402,13 @@ class CameraFragment : Fragment(), FirebaseUtil.View {
 
         val view = layoutInflater.inflate(R.layout.dialog_find_text_layout, null)
         view.tv_survey.text = imageText.surveyText
+
+        if (imageText.websites.isNotEmpty()) {
+            view.tv_info.visibility = View.VISIBLE
+        } else {
+            view.tv_info.visibility = View.GONE
+        }
+
         val textViewAdapter = TextViewRecyclerAdapter(imageText.websites,
             TextViewRecyclerAdapter.TextViewListener { website ->
                 val uri = Uri.parse(website)

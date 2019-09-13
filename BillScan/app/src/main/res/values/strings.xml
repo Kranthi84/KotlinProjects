@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">My Application</string>
+	<string name="app_name">Receipt Scanner</string>
 	<string name="cam_img_view">camera_image_view</string>
 	<string name="button_camera">camera_button</string>
 	<string name="button_gallery">gallery_button</string>
@@ -10,13 +10,14 @@
 	<string name="cancel_string">Cancel</string>
 	<string name="date_string">Date</string>
 	<string name="name_string">Name</string>
-	<string name="list_title">Click on each item to see the bills</string>
+	<string name="list_title">Click on each item to select the image and scan</string>
 	<string name="find_button">Scan Image</string>
 	<string name="select_image_for_text_recognition">Select image for text recognition.</string>
 	<string name="tv_website_placeholder"><a>goto: <u><b>%1$s</b></u></a></string>
 	<string name="tv_survey_text">Survey Text</string>
-	<string name="tv_amount_placeholder">Total Amount: <b>%1$d</b></string>
+	<string name="tv_info_placeholder">Links are clickable.\n Text can be copied.</string>
 	<string name="delete">delete</string>
+	<string name="dialog_title">Links and Text</string>
 
 
 </resources>

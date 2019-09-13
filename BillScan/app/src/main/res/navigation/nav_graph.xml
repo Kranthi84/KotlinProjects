@@ -9,7 +9,7 @@
 	<fragment
 			android:id="@+id/listOfBillsFragment"
 			android:name="com.billscan.application.fragments.ListOfBillsFragment"
-			android:label="List Of Bills"
+			android:label="Saved Images"
 			tools:layout="@layout/list_of_bills_fragment">
 		<action
 				android:id="@+id/action_listOfBillsFragment_to_cameraFragment"
@@ -38,7 +38,7 @@
 			android:id="@+id/imageFragment"
 			android:name="com.billscan.application.fragments.ImageFragment"
 			android:label="image_layout"
-			tools:layout="@layout/image_layout" >
+			tools:layout="@layout/image_layout">
 		<argument
 				android:name="billNum"
 				app:argType="long" />
