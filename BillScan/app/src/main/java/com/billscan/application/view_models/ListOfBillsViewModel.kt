@@ -18,12 +18,21 @@ class ListOfBillsViewModel(application: Application, private var billDao: BillDa
 
     private var _bills = MutableLiveData<List<BillEntity>>()
 
+    private var _searchedBills = MutableLiveData<MutableList<BillEntity>>()
+
+    val searchedBills: LiveData<MutableList<BillEntity>>
+        get() = _searchedBills
+
     val bills: LiveData<List<BillEntity>>
         get() = _bills
 
     val bill: LiveData<BillEntity>
         get() = _bill
 
+
+    init {
+        _searchedBills.value = ArrayList()
+    }
 
     fun initializeTopBill() {
 
@@ -52,6 +61,18 @@ class ListOfBillsViewModel(application: Application, private var billDao: BillDa
         }
 
 
+    }
+
+    fun searchText(newText: String) {
+        _searchedBills.value?.clear()
+        for (i in _bills.value!!) {
+            if (i.billDate.toLowerCase().contains(newText) || i.billName.toLowerCase().contains(
+                    newText
+                )
+            ) {
+                _searchedBills.value?.add(i)
+            }
+        }
     }
 
     private suspend fun getAllBillsfromDatabase(): List<BillEntity> {

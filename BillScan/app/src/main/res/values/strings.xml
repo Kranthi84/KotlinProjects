@@ -18,6 +18,7 @@
 	<string name="tv_info_placeholder">Links are clickable.\n Text can be copied.</string>
 	<string name="delete">delete</string>
 	<string name="dialog_title">Links and Text</string>
+	<string name="search_icon">Search</string>
 
 
 </resources>

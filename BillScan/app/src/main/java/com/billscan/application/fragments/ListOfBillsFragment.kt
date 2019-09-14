@@ -1,9 +1,8 @@
 package com.billscan.application.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -20,12 +19,29 @@ import com.billscan.application.view_models.ListOfBillsViewModel
 import com.billscan.application.view_models.ListOfBillsViewModelFactory
 import java.io.File
 
-class ListOfBillsFragment : Fragment() {
+
+class ListOfBillsFragment : Fragment(), SearchView.OnQueryTextListener {
+    override fun onQueryTextSubmit(p0: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(searchText: String?): Boolean {
+        val newText = searchText?.toLowerCase()
+        newText?.let {
+            viewModel.searchText(newText)
+            adapter?.let {
+                it.updateList(viewModel.searchedBills.value)
+            }
+
+        }
+        return true
+    }
 
     private lateinit var binding: ListOfBillsFragmentBinding
     private lateinit var viewModel: ListOfBillsViewModel
     var recyclerView: RecyclerView? = null
     var adapter: ImageRecyclerAdapter? = null
+    var searchView: SearchView? = null
 
     companion object {
         fun newInstance() = ListOfBillsFragment()
@@ -47,9 +63,7 @@ class ListOfBillsFragment : Fragment() {
         recyclerView?.let {
             it.layoutManager = LinearLayoutManager(this.context)
         }
-
-
-
+        setHasOptionsMenu(true)
         return binding.root
 
     }
@@ -98,6 +112,21 @@ class ListOfBillsFragment : Fragment() {
                 it.adapter = adapter
             }
         })
+
+
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_menu, menu)
+        menu.findItem(R.id.search_view).actionView?.let {
+            searchView = it as SearchView
+            val sView = searchView
+            sView?.maxWidth = Int.MAX_VALUE
+            sView?.setOnQueryTextListener(this)
+        }
+
+
+    }
+
 
 }

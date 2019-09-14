@@ -18,6 +18,14 @@ class ImageRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    fun updateList(newList: MutableList<BillEntity>?) {
+        newList?.let {
+            this.data = it
+            notifyDataSetChanged()
+        }
+
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         return ImageViewHolder.from(parent)
     }
